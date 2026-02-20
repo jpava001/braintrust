@@ -16,17 +16,22 @@ This sample demonstrates how to trace LLM calls using Braintrust with the RubyLL
 
    Get your Braintrust API key from: https://www.braintrust.dev/app/settings/api-keys
 
-## Run
+## Scripts
+
+The `scripts/` folder contains examples demonstrating different Braintrust features:
+
+| Script | Description |
+|--------|-------------|
+| `1_easy_trace.rb` | Basic tracing setup with RubyLLM and Claude |
+| `2_trace_with_variables.rb` | Load prompts from Braintrust and use Mustache variable substitution |
+| `3_reading_comprehension_traces.rb` | Batch trace creation using OpenTelemetry with test case data |
+| `4_score_comparison_eval.rb` | Run evaluations against a Braintrust dataset with custom scorers |
+
+Run any script with:
 
 ```bash
-ruby sample_trace.rb
+ruby scripts/1_easy_trace.rb
 ```
-
-## What it does
-
-- Initializes Braintrust with automatic tracing enabled for RubyLLM
-- Makes a chat completion request to OpenAI's GPT-4o-mini model
-- Automatically captures and sends the trace to Braintrust
 
 ## View your traces
 
