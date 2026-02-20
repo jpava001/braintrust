@@ -1,75 +1,40 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
+
 require 'dotenv/load'
-require 'braintrust'
-require 'json'
+require "bundler/setup"
+require "braintrust"
 
-# =============================================================================
-# CONFIGURATION
-# =============================================================================
-PROJECT_NAME = 'My Project'
-DATA_FILE = File.join(__dir__, 'data', 'science_history_test_cases.json')
+# Project name
+project_name = "My Project"
+Braintrust.init(default_project: project_name)
 
-# =============================================================================
-# SETUP
-# =============================================================================
+# Create a dataset with test cases
+dataset_name = "Science History Test Cases"
 
-Braintrust.init
-api = Braintrust::API.new
-at_exit { OpenTelemetry.tracer_provider.shutdown }
-
-# =============================================================================
-# LOAD TEST CASES
-# =============================================================================
-
-puts "Loading test cases from #{DATA_FILE}..."
-test_cases = JSON.parse(File.read(DATA_FILE))
-puts "Loaded #{test_cases.length} test cases"
-
-# =============================================================================
-# DEFINE TASK AND SCORER
-# =============================================================================
-
-# Task: extract the actual score from the test case
+# Define task: simple string upcase
 task = ->(input) do
-  input['llm_scoring_output']['total_score']
+  rand(1..5)
 end
 
-# Scorer: compute the difference between actual and expected scores
-# Positive = actual > expected, Negative = actual < expected, Zero = match
-score_difference = Braintrust::Eval.scorer("score_difference") do |input, expected, output|
-  actual_score = output
-  expected_score = expected
-  actual_score - expected_score
+# Define scorer: exact match
+scorer = Braintrust::Eval.scorer("exact_match") do |input, expected, output|
+  0
 end
 
-# =============================================================================
-# PREPARE DATA FOR EVALUATION
-# =============================================================================
-
-# Convert test cases to the format expected by Braintrust evaluation
-eval_data = test_cases.map do |test_case|
-  {
-    input: test_case,
-    expected: test_case['expected_score']
-  }
-end
-
-# =============================================================================
-# RUN EVALUATION
-# =============================================================================
-
+# Example 1: Run eval with dataset as string (uses same project)
 puts "\n" + "=" * 60
-puts "Running Score Comparison Evaluation"
+puts "Example 1: Dataset as string (same project)"
 puts "=" * 60
 
 Braintrust::Eval.run(
-  project: PROJECT_NAME,
-  experiment: "science-history-score-comparison-#{Time.now.to_i}",
-  data: eval_data,
+  project: project_name,
+  experiment: "dataset-eval-string",
+  dataset: dataset_name,  # Simple string - fetches from same project
   task: task,
-  scorers: [score_difference]
+  scorers: [scorer]
 )
 
-puts "\n--- Complete ---"
-puts "Evaluation results have been pushed to Braintrust!"
-puts "View them at: https://www.braintrust.dev"
+OpenTelemetry.tracer_provider.force_flush
+
+puts "Done"

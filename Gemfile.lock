@@ -103,6 +103,7 @@ PLATFORMS
 DEPENDENCIES
   braintrust
   dotenv
+  opentelemetry-sdk
   ruby_llm
 
 BUNDLED WITH

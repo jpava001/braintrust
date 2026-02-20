@@ -22,12 +22,9 @@ Braintrust.init(default_project: PROJECT_NAME)
 
 puts "Loading prompt '#{PROMPT_SLUG}' from project '#{PROJECT_NAME}'..."
 prompt = Braintrust::Prompt.load(project: PROJECT_NAME, slug: PROMPT_SLUG)
-prompt_data = prompt.instance_variable_get(:@data)
-prompt_version = prompt_data["version"] || prompt_data["_xact_id"]
 puts "Prompt loaded successfully!"
 puts "  ID: #{prompt.id}"
 puts "  Slug: #{prompt.slug}"
-puts "  Version: #{prompt_version}"
 puts "---"
 
 # =============================================================================
